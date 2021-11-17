@@ -1,9 +1,7 @@
-use std::cmp::PartialOrd;
-
 fn main() {
     let mut b = Board::new();
-    b.b[0][1] = Move::O;
-    b.b[1][1] = Move::X;
+    b.play_o(0, 1);
+    b.play_x(1, 1);
     b.print();
 }
 
@@ -14,7 +12,7 @@ struct Board {
 impl Board {
     fn new() -> Board {
         Board {
-            b: [[Move::free; 3]; 3],
+            b: [[Move::Free; 3]; 3],
         }
     }
 
@@ -36,14 +34,19 @@ impl Board {
         println!();
     }
 
-    fn play_x(&self, i: usize, j: usize) {}
+    fn play_x(&mut self, i: usize, j: usize) {
+        self.b[i][j] = Move::X;
+    }
+    fn play_o(&mut self, i: usize, j: usize) {
+        self.b[i][j] = Move::O;
+    }
 }
 
 #[derive(Copy, Clone)]
 enum Move {
     X,
     O,
-    free,
+    Free,
 }
 
 impl std::fmt::Display for Move {
@@ -51,7 +54,7 @@ impl std::fmt::Display for Move {
         match self {
             Move::X => write!(f, "X"),
             Move::O => write!(f, "O"),
-            Move::free => write!(f, " "),
+            Move::Free => write!(f, " "),
         }
     }
 }
