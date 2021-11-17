@@ -6,20 +6,21 @@ fn main() {
 }
 
 struct Board {
-    b: [[Move; 3]; 3],
+    b: [[Option<Player>; 3]; 3],
 }
 
 impl Board {
     fn new() -> Board {
-        Board {
-            b: [[Move::Free; 3]; 3],
-        }
+        Board { b: [[None; 3]; 3] }
     }
 
     fn print(&self) {
         for i in 0..3 {
             for j in 0..3 {
-                print!(" {} ", self.b[i][j]);
+                match self.b[i][j] {
+                    None => print!("   "),
+                    Some(p) => print!(" {} ", p),
+                }
                 if j < 2 {
                     print!("|");
                 }
@@ -35,26 +36,24 @@ impl Board {
     }
 
     fn play_x(&mut self, i: usize, j: usize) {
-        self.b[i][j] = Move::X;
+        self.b[i][j] = Some(Player::X);
     }
     fn play_o(&mut self, i: usize, j: usize) {
-        self.b[i][j] = Move::O;
+        self.b[i][j] = Some(Player::O);
     }
 }
 
 #[derive(Copy, Clone)]
-enum Move {
+enum Player {
     X,
     O,
-    Free,
 }
 
-impl std::fmt::Display for Move {
+impl std::fmt::Display for Player {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            Move::X => write!(f, "X"),
-            Move::O => write!(f, "O"),
-            Move::Free => write!(f, " "),
+            Player::X => write!(f, "X"),
+            Player::O => write!(f, "O"),
         }
     }
 }
