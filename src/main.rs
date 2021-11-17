@@ -2,18 +2,20 @@ use std::cmp::PartialOrd;
 
 fn main() {
     let mut b = Board::new();
-    b.b[0][1] = 'o';
-    b.b[1][1] = 'x';
+    b.b[0][1] = Move::O;
+    b.b[1][1] = Move::X;
     b.print();
 }
 
 struct Board {
-    b: [[char; 3]; 3],
+    b: [[Move; 3]; 3],
 }
 
 impl Board {
     fn new() -> Board {
-        Board { b: [[' '; 3]; 3] }
+        Board {
+            b: [[Move::free; 3]; 3],
+        }
     }
 
     fn print(&self) {
@@ -37,8 +39,19 @@ impl Board {
     fn play_x(&self, i: usize, j: usize) {}
 }
 
-enum XOs {
+#[derive(Copy, Clone)]
+enum Move {
     X,
     O,
-    Empty,
+    free,
+}
+
+impl std::fmt::Display for Move {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Move::X => write!(f, "X"),
+            Move::O => write!(f, "O"),
+            Move::free => write!(f, " "),
+        }
+    }
 }
