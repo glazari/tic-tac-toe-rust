@@ -2,21 +2,7 @@ use std::io;
 
 fn main() {
     let mut b = Board::new();
-
-    let mut turn = Player::X;
-
-    while b.winner().is_none() {
-        b.print();
-        b.play_from_input(turn);
-        turn = match turn {
-            Player::X => Player::O,
-            Player::O => Player::X,
-        }
-    }
-
-    b.print();
-    println!("winner: {:?}", b.winner());
-    println!("Done!")
+    b.play();
 }
 
 struct Board {
@@ -26,6 +12,22 @@ struct Board {
 impl Board {
     fn new() -> Board {
         Board { b: [[None; 3]; 3] }
+    }
+
+    fn play(&mut self) {
+        let mut turn = Player::X;
+
+        while self.winner().is_none() {
+            self.print();
+            self.play_from_input(turn);
+            turn = match turn {
+                Player::X => Player::O,
+                Player::O => Player::X,
+            }
+        }
+        self.print();
+        println!("winner: {:?}", self.winner().unwrap());
+        println!("Done!")
     }
 
     fn winner(&self) -> Option<Player> {
