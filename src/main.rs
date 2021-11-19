@@ -1,40 +1,50 @@
 use std::io;
-use std::io::*;
 
 fn main() {
     let mut b = Board::new();
 
-    b.print();
+    let mut turn = Player::X;
 
-    let mut input = String::new();
+    while b.winner().is_none() {
+        b.print();
+        b.play_from_input(turn);
+        turn = match turn {
+            Player::X => Player::O,
+            Player::O => Player::X,
+        }
+    }
 
-    b.play_x(1, 1);
     b.print();
-    b.play_from_input(Player::O);
-    b.print();
+    println!("winner: {:?}", b.winner());
     println!("Done!")
 }
 
 struct Board {
     b: [[Option<Player>; 3]; 3],
-    turn: Player,
 }
 
 impl Board {
     fn new() -> Board {
-        Board {
-            b: [[None; 3]; 3],
-            turn: Player::X,
-        }
+        Board { b: [[None; 3]; 3] }
     }
 
-    fn finnished(&self) -> bool {
-        for i in 0..3 {
-            if self.b[i][0].is_none() | self.b[i][1].is_none() | self.b[i][2].is_none() {
-                continue;
+    fn winner(&self) -> Option<Player> {
+        for i in 1..3 {
+            if self.b[i].iter().all(|x| *x == Some(Player::X)) {
+                return Some(Player::X);
+            }
+            if self.b[i].iter().all(|x| *x == Some(Player::O)) {
+                return Some(Player::O);
+            }
+            if self.b.iter().all(|x| x[i] == Some(Player::X)) {
+                return Some(Player::X);
+            }
+            if self.b.iter().all(|x| x[i] == Some(Player::O)) {
+                return Some(Player::O);
             }
         }
-        true
+
+        None
     }
 
     fn print(&self) {
@@ -60,7 +70,7 @@ impl Board {
 
     fn play_from_input(&mut self, turn: Player) {
         loop {
-            println!("Enter input: ");
+            println!("Player's {} turn: ", turn);
             let mut input = String::new();
             io::stdin().read_line(&mut input).unwrap();
             let mut parts = input.split_whitespace().map(|s| s.parse::<usize>());
@@ -79,16 +89,9 @@ impl Board {
         }
         println!();
     }
-
-    fn play_x(&mut self, i: usize, j: usize) {
-        self.b[i][j] = Some(Player::X);
-    }
-    fn play_o(&mut self, i: usize, j: usize) {
-        self.b[i][j] = Some(Player::O);
-    }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 enum Player {
     X,
     O,
